@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <stdatomic.h>
 #include <sys/cdefs.h>
 
 #include <log/log.h>
@@ -26,7 +25,7 @@
 __BEGIN_DECLS
 
 struct logger_list {
-  atomic_int fd;
+  std::atomic_int fd;
   int mode;
   unsigned int tail;
   log_time start;

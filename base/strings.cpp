@@ -96,7 +96,7 @@ bool StartsWith(std::string_view s, char prefix) {
 }
 
 bool StartsWithIgnoreCase(std::string_view s, std::string_view prefix) {
-  return s.size() >= prefix.size() && strncasecmp(s.data(), prefix.data(), prefix.size()) == 0;
+  return s.size() >= prefix.size() && _strnicmp(s.data(), prefix.data(), prefix.size()) == 0;
 }
 
 bool EndsWith(std::string_view s, std::string_view suffix) {
@@ -109,11 +109,11 @@ bool EndsWith(std::string_view s, char suffix) {
 
 bool EndsWithIgnoreCase(std::string_view s, std::string_view suffix) {
   return s.size() >= suffix.size() &&
-         strncasecmp(s.data() + (s.size() - suffix.size()), suffix.data(), suffix.size()) == 0;
+         _strnicmp(s.data() + (s.size() - suffix.size()), suffix.data(), suffix.size()) == 0;
 }
 
 bool EqualsIgnoreCase(std::string_view lhs, std::string_view rhs) {
-  return lhs.size() == rhs.size() && strncasecmp(lhs.data(), rhs.data(), lhs.size()) == 0;
+  return lhs.size() == rhs.size() && _strnicmp(lhs.data(), rhs.data(), lhs.size()) == 0;
 }
 
 std::string StringReplace(std::string_view s, std::string_view from, std::string_view to,

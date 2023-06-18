@@ -56,6 +56,8 @@
 
 #include <android-base/file.h>
 #include <android-base/macros.h>
+#undef min
+#undef max
 #include <android-base/parseint.h>
 #include <android-base/strings.h>
 #include <android-base/threads.h>

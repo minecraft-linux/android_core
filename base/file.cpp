@@ -62,7 +62,7 @@ static int mkstemp(char* name_template, size_t size_in_chars) {
 
   // Use open() to match the close() that TemporaryFile's destructor does.
   // Use O_BINARY to match base file APIs.
-  int fd = _wopen(path.c_str(), O_CREAT | O_EXCL | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+  int fd = _wopen(path.c_str(), O_CREAT | O_EXCL | O_RDWR | O_BINARY, 0);
   if (fd < 0) {
     return -1;
   }
@@ -171,32 +171,32 @@ TemporaryDir::TemporaryDir() {
 TemporaryDir::~TemporaryDir() {
   if (!remove_dir_and_contents_) return;
 
-  auto callback = [](const char* child, const struct stat*, int file_type, struct FTW*) -> int {
-    switch (file_type) {
-      case FTW_D:
-      case FTW_DP:
-      case FTW_DNR:
-        if (rmdir(child) == -1) {
-          PLOG(ERROR) << "rmdir " << child;
-        }
-        break;
-      case FTW_NS:
-      default:
-        if (rmdir(child) != -1) break;
-        // FALLTHRU (for gcc, lint, pcc, etc; and following for clang)
-        FALLTHROUGH_INTENDED;
-      case FTW_F:
-      case FTW_SL:
-      case FTW_SLN:
-        if (unlink(child) == -1) {
-          PLOG(ERROR) << "unlink " << child;
-        }
-        break;
-    }
-    return 0;
-  };
+  // auto callback = [](const char* child, const struct stat*, int file_type, struct FTW*) -> int {
+  //   switch (file_type) {
+  //     case FTW_D:
+  //     case FTW_DP:
+  //     case FTW_DNR:
+  //       if (rmdir(child) == -1) {
+  //         PLOG(ERROR) << "rmdir " << child;
+  //       }
+  //       break;
+  //     case FTW_NS:
+  //     default:
+  //       if (rmdir(child) != -1) break;
+  //       // FALLTHRU (for gcc, lint, pcc, etc; and following for clang)
+  //       FALLTHROUGH_INTENDED;
+  //     case FTW_F:
+  //     case FTW_SL:
+  //     case FTW_SLN:
+  //       if (unlink(child) == -1) {
+  //         PLOG(ERROR) << "unlink " << child;
+  //       }
+  //       break;
+  //   }
+  //   return 0;
+  // };
 
-  nftw(path, callback, 128, FTW_DEPTH | FTW_MOUNT | FTW_PHYS);
+  // nftw(path, callback, 128, FTW_DEPTH | FTW_MOUNT | FTW_PHYS);
 }
 
 bool TemporaryDir::init(const std::string& tmp_dir) {
@@ -361,6 +361,14 @@ bool WriteFully(borrowed_fd fd, const void* data, size_t byte_count) {
   }
   return true;
 }
+
+#define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
+#define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
+#define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
+#define S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
 
 bool RemoveFileIfExists(const std::string& path, std::string* err) {
   struct stat st;

@@ -16,12 +16,14 @@
 
 #pragma once
 
-#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 
 #if !defined(_WIN32)
+#include <dirent.h>
 #include <sys/socket.h>
+#else
+#include <io.h>
 #endif
 
 #include <stdio.h>
@@ -79,7 +81,7 @@ struct DefaultCloser {
     // Using TEMP_FAILURE_RETRY will either lead to EBADF or closing someone
     // else's fd.
     // http://lkml.indiana.edu/hypermail/linux/kernel/0509.1/0877.html
-    ::close(fd);
+    close(fd);
   }
 #endif
 };
@@ -286,6 +288,8 @@ template <typename T>
 FILE* fdopen(const android::base::unique_fd_impl<T>&, const char* mode)
     __attribute__((__unavailable__("fdopen takes ownership of the fd passed in; either dup the "
                                    "unique_fd, or use android::base::Fdopen to pass ownership")));
+
+typedef void DIR;
 
 template <typename T>
 DIR* fdopendir(const android::base::unique_fd_impl<T>&) __attribute__((

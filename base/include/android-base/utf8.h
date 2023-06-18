@@ -88,6 +88,7 @@ bool UTF8PathToWindowsLongPath(const char* utf8, std::wstring* utf16);
 namespace utf8 {
 
 #ifdef _WIN32
+typedef int mode_t;
 FILE* fopen(const char* name, const char* mode);
 int mkdir(const char* name, mode_t mode);
 int open(const char* name, int flags, ...);

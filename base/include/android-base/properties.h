@@ -22,6 +22,8 @@
 #include <limits>
 #include <optional>
 #include <string>
+#undef min
+#undef max
 
 struct prop_info;
 

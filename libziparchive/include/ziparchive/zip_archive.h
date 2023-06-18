@@ -57,7 +57,7 @@ struct ZipEntry {
 
   // Suggested Unix mode for this entry, from the zip archive if created on
   // Unix, or a default otherwise. See also `external_file_attributes`.
-  mode_t unix_mode;
+  int unix_mode;
 
   // 1 if this entry contains a data descriptor segment, 0
   // otherwise.
